@@ -7,6 +7,7 @@ import Navbar from "./components/layout/Navbar";
 import { NeonAuthUIProvider } from "@neondatabase/neon-js/auth/react";
 import { authClient } from "./lib/auth";
 import AuthProvider from "./context/AuthContext";
+import MainLayout from "./components/layout/MainLayout";
 
 function App() {
 	return (
@@ -15,20 +16,24 @@ function App() {
 				<BrowserRouter>
 					<div className="min-h-screen flex flex-col">
 						<Navbar />
-						<main className="flex-1 min-h-screen pt-18 px-4 md:px-6 pb-12">
+
+						<main className="flex-1">
 							<Routes>
-								<Route index element={<Home />} />
-								<Route
-									path="/onboarding"
-									element={<Onboarding />}
-								/>
+								<Route element={<MainLayout />}>
+									<Route index element={<Home />} />
+									<Route
+										path="/onboarding"
+										element={<Onboarding />}
+									/>
+									<Route
+										path="/account/:pathname"
+										element={<Account />}
+									/>
+								</Route>
+
 								<Route
 									path="/auth/:pathname"
 									element={<Auth />}
-								/>
-								<Route
-									path="/account/:pathname"
-									element={<Account />}
 								/>
 							</Routes>
 						</main>
