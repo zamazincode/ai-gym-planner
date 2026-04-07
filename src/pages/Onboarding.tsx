@@ -52,7 +52,7 @@ const splitOptions = [
 ];
 
 export default function Onboarding() {
-	const { user, saveProfile } = useAuth();
+	const { user, saveProfile, generatePlan } = useAuth();
 	const [formData, setFormData] = useState({
 		goal: "bulk",
 		experience: "intermediate",
@@ -86,7 +86,7 @@ export default function Onboarding() {
 		try {
 			await saveProfile(profile);
 			setIsGenerating(true);
-			// await generatePlan();
+			await generatePlan();
 			navigate("/profile");
 		} catch (err) {
 			setError(
@@ -104,11 +104,8 @@ export default function Onboarding() {
 
 	return (
 		<SignedIn>
-			<div className="min-h-screen pt-24 pb-12 px-6">
+			<div className="min-h-screen pt-8 pb-12 px-6">
 				<div className="max-w-xl mx-auto">
-					{/* Progress Indicator */}
-
-					{/* Step 1: Questionnaire */}
 					{!isGenerating ? (
 						<Card variant="bordered">
 							<h1 className="text-2xl font-bold mb-2">
@@ -212,7 +209,7 @@ export default function Onboarding() {
 						</Card>
 					) : (
 						<Card variant="bordered" className="text-center py-16">
-							<Loader2 className="w-12 h-12 text-color-accent mx-auto mb-6 animate-spin" />
+							<Loader2 className="w-12 h-12 text-accent mx-auto mb-6 animate-spin" />
 							<h1 className="text-2xl font-bold mb-2">
 								Creating your Plan
 							</h1>
