@@ -2,6 +2,7 @@ import {
 	createContext,
 	useCallback,
 	useEffect,
+	useMemo,
 	useRef,
 	useState,
 	type ReactNode,
@@ -30,6 +31,7 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 	const [isLoading, setIsLoading] = useState(true);
 	const isRefreshingRef = useRef(false);
 
+	// set neon user
 	useEffect(() => {
 		async function loadUser() {
 			try {
@@ -47,17 +49,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		loadUser();
 	}, []);
 
-	useEffect(() => {
-		if (!isLoading) {
-			if (neonUser?.id) {
-				refreshData();
-			} else {
-				setPlan(null);
-			}
-			setIsLoading(false);
-		}
-	}, [neonUser?.id, isLoading]);
-
 	// refreshData memoize
 	const refreshData = useCallback(async () => {
 		if (!neonUser || isRefreshingRef.current) return;
@@ -65,9 +56,6 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		isRefreshingRef.current = true;
 
 		try {
-			// Fetch profile
-			// const profileData =
-
 			// Fetch Plan
 			const planData = await api
 				.getCurrentPlan(neonUser.id)
@@ -90,6 +78,17 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		}
 	}, [neonUser?.id]);
 
+	useEffect(() => {
+		if (!isLoading) {
+			if (neonUser?.id) {
+				refreshData();
+			} else {
+				setPlan(null);
+			}
+			setIsLoading(false);
+		}
+	}, [neonUser?.id, isLoading]);
+
 	async function saveProfile(
 		profileData: Omit<UserProfile, "userId" | "updatedAt">,
 	) {
@@ -110,17 +109,20 @@ export default function AuthProvider({ children }: { children: ReactNode }) {
 		await refreshData();
 	}
 
+	const contextValue = useMemo(
+		() => ({
+			user: neonUser,
+			isLoading,
+			saveProfile,
+			generatePlan,
+			plan,
+			refreshData,
+		}),
+		[neonUser, isLoading, plan, saveProfile, generatePlan, refreshData],
+	);
+
 	return (
-		<AuthContext.Provider
-			value={{
-				user: neonUser,
-				isLoading,
-				saveProfile,
-				generatePlan,
-				plan,
-				refreshData,
-			}}
-		>
+		<AuthContext.Provider value={contextValue}>
 			{children}
 		</AuthContext.Provider>
 	);

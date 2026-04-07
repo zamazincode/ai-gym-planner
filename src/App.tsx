@@ -8,6 +8,7 @@ import { NeonAuthUIProvider } from "@neondatabase/neon-js/auth/react";
 import { authClient } from "./lib/auth";
 import AuthProvider from "./context/AuthContext";
 import MainLayout from "./components/layout/MainLayout";
+import Profile from "./pages/Profile";
 
 function App() {
 	return (
@@ -28,6 +29,10 @@ function App() {
 									<Route
 										path="/account/:pathname"
 										element={<Account />}
+									/>
+									<Route
+										path="/profile"
+										element={<Profile />}
 									/>
 								</Route>
 
